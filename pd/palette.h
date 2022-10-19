@@ -81,7 +81,7 @@ Palette *Palette_New(int x,int y,int s,int cc,int nc,Color *c) {
 
 void Palette_Draw(SDL_Surface *srf,Palette *p) {
 
-	Graphics_DrawRect(srf,p->x,p->y,p->w,p->h,SDL_MapRGBA(srf->format,0x00,0x00,0x00,0xFF));
+	Graphics_FillRect(srf,p->x,p->y,p->w,p->h,SDL_MapRGBA(srf->format,0x00,0x00,0x00,0xFF));
 
 	for(int k=0;k<p->nc;k++) {
 		int i=k%8;
@@ -103,7 +103,7 @@ void Palette_HandleEvents(Palette *p,Mouse *m) {
 
 
 	if(inrect(m->x,m->y,p->x,p->y,p->w,p->h)) {
-			gameState=GAMESTATE_PALETTE;	
+		gameState=GAMESTATE_PALETTE;	
 	} else if(gameState==GAMESTATE_PALETTE) {
 		gameState=GAMESTATE_DEFAULT;		
 	}	

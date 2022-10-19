@@ -13,6 +13,10 @@
 #include "palette.h"
 #define MOUSE_IMPLEMENTATION
 #include "mouse.h"
+#define CANVAS_IMPLEMENTATION
+#include "canvas.h"
+#define GRID_IMPLEMENTATION
+#include "grid.h"
 
 
 
@@ -39,6 +43,9 @@ int drag=0;
 
 int px,py;
 
+int frame=0;
+
+
 
 
 int main() {
@@ -55,8 +62,11 @@ int main() {
 
 	Mouse *mouse=Mouse_New();
 
-	Palette *palette=Palette_New(0,0,16,12,sweetie_num_colors,sweetie);
+	Palette *palette=Palette_New(0,0,16,0,sweetie_num_colors,sweetie);
 
+	Canvas *canvas=Canvas_New(16,16,16,-1,palette);
+
+	Grid *grid=Grid_New(canvas,0,0,16,16,8,(Color){0x00,0x00,0x00,0xFF});
 
 
 	while(!quit) {
@@ -90,27 +100,12 @@ int main() {
 		SDL_FillRect(screen,&(SDL_Rect){0,0,SCREEN_WIDTH-1,SCREEN_HEIGHT-1},SDL_MapRGBA(screen->format,0x00,0x00,0x00,0xFF));
 
 
-
-		if(!draw) {
-			if(mouse->isDown && mouse->b==1) {				draw=true;
-				px=mouse->x;
-				py=mouse->y;
-			}
-		} else {
-			if(mouse->isDown && mouse->b==1) {
-				Graphics_DrawLine(screen,px,py,mouse->x,mouse->y,SDL_MapRGBA(screen->format,0xFF,0xFF,0xFF,0xFF));
-				px=mouse->x;
-				py=mouse->y;
-			} else {
-				draw=false;
-			}
-		}
-
-
-
+		Grid_Draw(screen,grid,frame);
 		Palette_Draw(screen,palette);
 
+		Grid_HandleEvents(grid,mouse,frame);
 		Palette_HandleEvents(palette,mouse);
+
 
 		
 		Graphics_DrawRect(screen,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,SDL_MapRGBA(screen->format,0xFF,0xFF,0xFF,0xFF));

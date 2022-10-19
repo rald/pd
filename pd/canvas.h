@@ -97,13 +97,11 @@ void Canvas_DrawLine(Canvas *cvs, int f, int x0, int y0, int x1, int y1, int c)
 
 
 
-void Canvas_Draw(SDL_Renderer *r,Canvas *cvs,int f,int x,int y,int s) {
+void Canvas_Draw(SDL_Surface *srf,Canvas *cvs,int f,int x,int y,int s) {
 	for(int j=0;j<cvs->h;j++) {
 		for(int i=0;i<cvs->w;i++) {
 			int k=cvs->p[f*cvs->w*cvs->h+j*cvs->w+i];
-			SDL_SetRenderDrawColor(r,cvs->pl->c[k].r,cvs->pl->c[k].g,cvs->pl->c[k].b,cvs->pl->c[k].a);
-
-			SDL_RenderFillRect(r,&(SDL_Rect){i*s+x,j*s+x,s,s});
+			Graphics_FillRect(srf,i*s+x,j*s+x,s,s,SDL_MapRGBA(srf->format,cvs->pl->c[k].r,cvs->pl->c[k].g,cvs->pl->c[k].b,cvs->pl->c[k].a));
 		}
 	}
 }

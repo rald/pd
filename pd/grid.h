@@ -4,7 +4,9 @@
 
 
 #include "GameState.h"
-
+#include "color.h"
+#define CANVAS_IMPLEMENTATION
+#include "canvas.h"
 
 
 typedef struct Grid Grid;
@@ -15,7 +17,7 @@ struct Grid {
 	int x,y;
 	int w,h;
 	int s;
-	SDL_Color c;
+	Color c;
 
 	int nx,ny;
 
@@ -30,8 +32,8 @@ struct Grid {
 
 
 
-Grid *Grid_New(Canvas *cvs,int x,int y,int w,int h,int s,SDL_Color c);
-void Grid_Draw(SDL_Renderer *r,Grid *grid,int f);
+Grid *Grid_New(Canvas *cvs,int x,int y,int w,int h,int s,Color c);
+void Grid_Draw(SDL_Surface *srf,Grid *grid,int f);
 void Grid_HandleEvents(Grid *g,Mouse *m,int f);
 
 
@@ -47,7 +49,7 @@ extern GameState gameState;
 
 
 
-Grid *Grid_New(Canvas *cvs,int x,int y,int w,int h,int s,SDL_Color c) {
+Grid *Grid_New(Canvas *cvs,int x,int y,int w,int h,int s,Color c) {
 	Grid *grid=malloc(sizeof(*grid));
 	if(grid) {
 		grid->cvs=cvs;
@@ -72,7 +74,7 @@ Grid *Grid_New(Canvas *cvs,int x,int y,int w,int h,int s,SDL_Color c) {
 
 
 
-void Grid_Draw(SDL_Renderer *r,Grid *g,int f) {
+void Grid_Draw(SDL_Surface *srf,Grid *g,int f) {
 
 	int x0=max(0,g->x);
 	int y0=max(0,g->y);
@@ -87,8 +89,7 @@ void Grid_Draw(SDL_Renderer *r,Grid *g,int f) {
 	for(int j=0;j<g->cvs->h;j++) {
 		for(int i=0;i<g->cvs->w;i++) {
 			int k=g->cvs->p[f*g->cvs->w*g->cvs->h+j*g->cvs->w+i];
-			SDL_SetRenderDrawColor(r,g->cvs->pl->c[k].r,g->cvs->pl->c[k].g,g->cvs->pl->c[k].b,g->cvs->pl->c[k].a);
-			SDL_RenderFillRect(r,&(SDL_Rect){i*g->s+g->x,j*g->s+g->y,g->s,g->s});
+			Graphics_FillRect(srf,i*g->s+g->x,j*g->s+g->y,g->s,g->s,SDL_MapRGBA(srf->format,g->cvs->pl->c[k].r,g->cvs->pl->c[k].g,g->cvs->pl->c[k].b,g->cvs->pl->c[k].a));
 		}
 	}
 
@@ -96,14 +97,12 @@ void Grid_Draw(SDL_Renderer *r,Grid *g,int f) {
 
 	if(g->isGrid) {
 
-		SDL_SetRenderDrawColor(r,g->c.r,g->c.g,g->c.b,g->c.a);
-
 		for(int i=0;i<=g->w;i++) {
-			SDL_RenderDrawLine(r,g->x+i*g->s,y0,g->x+i*g->s,y1);
+			Graphics_DrawLine(srf,g->x+i*g->s,y0,g->x+i*g->s,y1,SDL_MapRGBA(srf->format,g->c.r,g->c.g,g->c.b,g->c.a));
 		}
 
 		for(int j=0;j<=g->h;j++) {
-			SDL_RenderDrawLine(r,x0,g->y+j*g->s,x1,g->y+j*g->s);
+			Graphics_DrawLine(srf,x0,g->y+j*g->s,x1,g->y+j*g->s,SDL_MapRGBA(srf->format,g->c.r,g->c.g,g->c.b,g->c.a));
 		}
 
 	}
